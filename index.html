@@ -1,0 +1,348 @@
+<html>
+<head>
+  <meta charcet = "UTF-8">
+  <title>15 Пятнашки</title>
+  <style>
+  .wrap{
+    line-height: 0px;
+  }
+  .cell{
+    border: 1px solid black;
+    width: 100px;
+    height: 100px;
+    display: table-cell;
+    background-color: tan;
+    font: bold 60px comic sans ms;
+    text-align: center;
+    color: green;
+    caret-color: transparent;
+    cursor: pointer;
+  }
+  .emptyCage{
+    border: 1px solid black;
+    width: 100px;
+    height: 100px;
+    display: table-cell;
+    background-color: tan;
+    font: bold 60px comic sans ms;
+    text-align: center;
+    color: white;
+    caret-color: transparent;
+  }
+  #input, #button {
+    visibility: hidden;
+  }
+  #game_field {
+
+  }
+  </style>
+</head>
+<body>
+  <div id="game_field" class="wrap">
+    <div class="cell" data-num = "0"></div>
+    <div class="cell" data-num = "1"></div>
+    <div class="cell" data-num = "2"></div>
+    <div class="cell" data-num = "3"></div>
+    <br>
+    <div class="cell" data-num = "4"></div>
+    <div class="cell" data-num = "5"></div>
+    <div class="cell" data-num = "6"></div>
+    <div class="cell" data-num = "7"></div>
+    <br>
+    <div class="cell" data-num = "8"></div>
+    <div class="cell" data-num = "9"></div>
+    <div class="cell" data-num = "10"></div>
+    <div class="cell" data-num = "11"></div>
+    <br>
+    <div class="cell" data-num = "12"></div>
+    <div class="cell" data-num = "13"></div>
+    <div class="cell" data-num = "14"></div>
+    <div class="cell" data-num = "15"></div>
+  </div>
+  <br>
+  <input id="input" type="number" id="input_cell">
+  <button id="button" type="button" name="button" onclick="showNearestCells()">Показать соседние ячейки</button>
+  <script>
+    let correctAnswer = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0];
+    let tempArray = Array.from(correctAnswer);
+    let currentPosition = [];
+    let randomElementIndex = 0;
+    //let gameOver = false;
+
+    shuffleArray();
+
+    while (checkWin()) {
+      shuffleArray();
+    };
+
+    //console.log(currentPosition);
+    //addEventListener('click', function(event) {});
+
+    arrDiv = document.querySelectorAll("[data-num]");
+
+    for(let j = 0; j < currentPosition.length; j++) {
+      if (currentPosition[j] !==0) {
+        arrDiv[j].innerHTML = currentPosition[j];
+        // (currentPosition[j] !==0) ? currentPosition[j] : "";
+      } else {
+        arrDiv[j].innerHTML = "";
+        //arrDiv[j].classList.add("emptyCage");
+      };
+    };
+
+    addEventListener('click', function(event) {
+      if (event.target.className === "cell") { // && event.target.innerHTML === ""
+        // Проверяем наличие пустой ячейки среди соседних
+        //console.log(event.target.dataset.num);
+        //console.log(typeof(event.target.dataset.num));
+        //console.log(nearestCells(event.target.dataset.num));
+        let cellClick = Number(event.target.dataset.num);
+        let cellArr = nearestCells(event.target.dataset.num);
+        for(let k = 0; k < cellArr.length; k++) {
+          if (currentPosition[cellArr[k]] === 0) {
+            currentPosition[cellArr[k]] = currentPosition[cellClick];
+            arrDiv[cellArr[k]].innerHTML = String(currentPosition[cellClick]);
+            currentPosition[cellClick] = 0;
+            arrDiv[cellClick].innerHTML = "";
+            // Проверить на конец игры
+            if (checkWin()) {
+
+            };
+            break;
+          };
+        };
+      };
+    });
+
+
+
+
+    //.classList.add("letter2");
+
+    function shuffleArray() {
+      while (tempArray.length !== 0) {
+        randomElementIndex = Math.floor(Math.random() * tempArray.length);
+        currentPosition.push(tempArray[randomElementIndex]);
+        tempArray.splice(randomElementIndex, 1);
+      };
+    };
+
+    function nearestCells(x) {
+      x = Number(x);
+      if (x < 0 || x > 15) return undefined;
+      let arr = [];
+      if ((x - 4) >= 0) {arr.push(x - 4)};
+      if ((x + 4) <= 15) {arr.push(x + 4)};
+      if ((x + 1)%4 !== 0) {arr.push(x + 1)};
+      if (x%4 !== 0) {arr.push(x - 1)};
+      return arr.sort();
+    };
+
+    function checkWin() {
+      return currentPosition === correctAnswer;
+    };
+
+    function showNearestCells() {
+      let cell_number = Number(document.getElementById("input_cell").value);
+      console.log(cell_number);
+      console.log(typeof(cell_number));
+      console.log(nearestCells(cell_number));
+    }
+    /*let comment =document.getElementById("comment")
+    console.log(comment);
+    let stop = false;
+    let arrData = document.querySelectorAll("[data-num]");
+    let arr = [null, null, null, null, null, null, null, null, null];
+
+    let concat = function(a, b, c) {
+    let result = arr[a] + arr[b] + arr[c];
+
+
+    if (result === "xxx" || result === "ooo") {
+    return result;
+  };
+
+  switch (result) {
+  case "xxnull":
+  return ["x", c];
+  case "xnullx":
+  return ["x", b];
+  case "nullxx":
+  return ["x", a];
+  case "oonull":
+  return ["o", c];
+  case "onullo":
+  return ["o", b];
+  case "nulloo":
+  return ["o", a];
+  };
+  };
+
+  let changeColorAndStop = function(a, b, c, x) {
+  arrData[a].style.color = "red";
+  arrData[b].style.color = "red";
+  arrData[c].style.color = "red";
+  stop = true;
+  let who
+  if (x === "компьютер") {
+  who = "Компьютер";
+  comment.style.color = "green";
+  } else if (x === "игрок") {
+  who = "Ты";
+  };
+  comment.innerHTML = who + " победил!"
+  }
+
+  let checkWin = function() {
+
+  for (let i = 0; i < 3; i++) {
+  let result = concat(i, i + 3, i + 6);
+
+  if (result === "xxx") {
+  changeColorAndStop(i, i + 3, i + 6, "игрок");
+  } else if (result === "ooo"){
+  changeColorAndStop(i, i + 3, i + 6, "компьютер");
+  };
+  };
+
+  for (i = 0; i <= 6; i+=3) {
+  result = concat(i, i + 1, i + 2);
+
+  if (result === "xxx") {
+  changeColorAndStop(i, i + 1, i + 2, "игрок");
+  } else if (result === "ooo"){
+  changeColorAndStop(i, i + 1, i + 2, "компьютер");
+  };
+  };
+
+  result = concat(0, 4, 8);
+
+  if (result === "xxx") {
+  changeColorAndStop(0, 4, 8, "игрок");
+  } else if (result === "ooo"){
+  changeColorAndStop(0, 4, 8, "компьютер");
+  };
+
+  result = concat(2, 4, 6);
+
+  if (result === "xxx") {
+  changeColorAndStop(2, 4, 6, "игрок");
+  } else if (result === "ooo"){
+  changeColorAndStop(2, 4, 6, "компьютер");
+  };
+  };
+
+  let botZero = function() {
+
+  // Проверяем возможность выигрыша следующим ходом
+  for (let i = 0; i < 3; i++) {
+  let result = concat(i, i + 3, i + 6);
+
+  if (typeof(result) === "object" && result[0] === "o") {
+  arrData[result[1]].innerHTML = "o";
+  arr[result[1]] = "o";
+  return;
+  };
+  };
+
+  for (i = 0; i <= 6; i+=3) {
+  let result = concat(i, i + 1, i + 2);
+
+  if (typeof(result) === "object" && result[0] === "o") {
+  arrData[result[1]].innerHTML = "o";
+  arr[result[1]] = "o";
+  return;
+  };
+  };
+
+  result = concat(0, 4, 8);
+  if (typeof(result) === "object" && result[0] === "o") {
+  arrData[result[1]].innerHTML = "o";
+  arr[result[1]] = "o";
+  return;
+  };
+
+  result = concat(2, 4, 6);
+  if (typeof(result) === "object" && result[0] === "o") {
+  arrData[result[1]].innerHTML = "o";
+  arr[result[1]] = "o";
+  return;
+  };
+
+  // Препятствуем победе игрока
+  for (let i = 0; i < 3; i++) {
+  let result = concat(i, i + 3, i + 6);
+
+  if (typeof(result) === "object" && result[0] === "x") {
+  arrData[result[1]].innerHTML = "o";
+  arr[result[1]] = "o";
+  return;
+  };
+  };
+
+  for (i = 0; i <= 6; i+=3) {
+  let result = concat(i, i + 1, i + 2);
+
+  if (typeof(result) === "object" && result[0] === "x") {
+  arrData[result[1]].innerHTML = "o";
+  arr[result[1]] = "o";
+  return;
+  };
+  };
+
+  result = concat(0, 4, 8);
+  if (typeof(result) === "object" && result[0] === "x") {
+  arrData[result[1]].innerHTML = "o";
+  arr[result[1]] = "o";
+  return;
+  };
+
+  result = concat(2, 4, 6);
+  if (typeof(result) === "object" && result[0] === "x") {
+  arrData[result[1]].innerHTML = "o";
+  arr[result[1]] = "o";
+  return;
+  };
+
+  // Ставим нолик в случайной свободной ячейке
+  let tempArr = [];
+  for(i = 0; i < 9; i++) {
+  if (arr[i] === null) {
+  tempArr.push(i);
+  };
+  };
+  if (tempArr.length === 0) {
+  comment.innerHTML = "Ничья";
+  return;
+  } else {
+  let randIndexTempArr = Math.floor(Math.random() * tempArr.length);
+  let randNull = tempArr[randIndexTempArr];
+  arrData[randNull].innerHTML = "o";
+  arr[randNull] = "o";
+  };
+  };
+
+  addEventListener('click', function(event) {
+  if (stop === true) {return}
+  if (event.target.className === "cell" && event.target.innerHTML === "") {
+  event.target.innerHTML = "x";
+  event.target.style.color = "blue";
+  arr[event.target.dataset.num] = "x";
+  } else {
+  return;
+  };
+
+  checkWin();
+
+  if (stop === true) {return};
+
+  botZero();
+
+  checkWin();
+  }
+  )*/
+
+
+</script>
+</body>
+</html>
